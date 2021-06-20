@@ -1,0 +1,9 @@
+{
+  "TARGET_HOST": "127.0.0.1",
+  "LOOP_DELAY": 10,
+  "RESEND_DELAY": 3600,
+  "NOTICE_HEADER": "PingNoticeTG @ TESTSERVER",
+  "TELEGRAM_BOT_URL": "https://telegramapi.asec01.net/bot",
+  "TELEGRAM_BOT_TOKEN": "000000000:qwertyuiopasdfghjjklzxcvbnmnabcdefg",
+  "TELEGRAM_CHAT_ID": "000000000"
+}
