@@ -1,7 +1,7 @@
 import sys
 import json
 from ping3 import ping
-from time import sleep
+import time
 from datetime import datetime
 import requests
 
@@ -48,6 +48,7 @@ def get_notice_str(msg):
     global TARGET_HOST
     return '{}\n{}\nTarget: {}\n{}'.format(NOTICE_HEADER, datetime.now(), TARGET_HOST, msg)
 
+
 def send_notification(msg):
     global TELEGRAM_BOT_URL
     global TELEGRAM_BOT_TOKEN
@@ -64,6 +65,10 @@ def send_notification(msg):
         return
 
 
+def get_unix_time():
+    return int(time.time())
+
+
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         CONFIG_FILE_PATH = sys.argv[1]
@@ -73,23 +78,22 @@ if __name__ == '__main__':
     while True:
         if not ping_target(TARGET_HOST):
             print("Packet drop detected, wait 3s to confirm")
-            sleep(3)
+            time.sleep(3)
             if ping_target(TARGET_HOST):
                 print("Packet drop false alarm")
             else:
                 print("Packet drop confirmed, send notification")
                 send_notification(get_notice_str("Packet drop confirmed"))
-                TIME_OFFLINE = 0
+                TIME_OFFLINE = get_unix_time()
                 while not ping_target(TARGET_HOST):
-                    if TIME_OFFLINE >= RESEND_DELAY:
-                        TIME_OFFLINE = 0
+                    if (get_unix_time() - TIME_OFFLINE) >= RESEND_DELAY:
+                        TIME_OFFLINE = get_unix_time()
                         print("Offline time reached set value, send notification")
                         send_notification(get_notice_str("Packet drop still not solve"))
                     print('sleep {}s to continue'.format(LOOP_DELAY))
-                    sleep(LOOP_DELAY)
-                    TIME_OFFLINE = TIME_OFFLINE + LOOP_DELAY
+                    time.sleep(LOOP_DELAY)
                 print("Device online, send notification")
                 send_notification(get_notice_str("Packet drop solved"))
 
         print('sleep {}s to continue'.format(LOOP_DELAY))
-        sleep(LOOP_DELAY)
+        time.sleep(LOOP_DELAY)
